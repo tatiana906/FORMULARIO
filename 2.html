@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FORMULARIO</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            height: 100vh;
+            background-image: url(https://th.bing.com/th/id/R.15f8d94b267cebe9812f5974242c6e9d?rik=P8aUDvlOjQqqNA&pid=ImgRaw&r=0);
+            background-size: cover;
+            background-position: center;
+            padding-top: 40px;
+        }
+
+        .formulario {
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            width: 300px;
+            background-image: url(https://www.solofondos.com/wp-content/uploads/2017/06/d82f7fd4f9c741766d53e766af6bcbbe-copia.jpg);
+            background-size: cover;
+            background-position: center;
+        }
+
+        h2 {
+            margin-bottom: 15px;
+            color: #000;
+        }
+
+        input, select, button {
+            display: block;
+            width: calc(100% - 20px);
+            margin: 10px auto;
+            padding: 10px;
+            border: none;
+            border-radius: 20px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        select {
+            appearance: none;
+            background: white;
+            cursor: pointer;
+        }
+
+        .sexo-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .sexo-container label {
+            font-size: 14px;
+        }
+
+        button {
+            background-color: black;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #333;
+        }
+
+        .alerta {
+            display: none;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            text-align: center;
+            font-weight: bold;
+            animation: aparecer 0.5s ease-out;
+        }
+
+        .alerta.exito {
+            background-color: #4CAF50; /* verde */
+        }
+
+        .alerta.error {
+            background-color: #f44336; /* rojo */
+        }
+
+        @keyframes aparecer {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="formulario">
+        <h2>REGISTRARSE</h2>
+        <form onsubmit="validarFormulario(event)" novalidate>
+            <input type="text" id="nombres" placeholder="Nombres">
+            <input type="text" id="apellidos" placeholder="Apellidos">
+            <input type="tel" id="telefono" placeholder="Número de teléfono">
+            <select id="tipoDocumento">
+                <option value="">Selecciona una opción...</option>
+                <option value="Cédula de Ciudadanía">Cédula de Ciudadanía</option>
+                <option value="Tarjeta de Identidad">Tarjeta de Identidad</option>
+                <option value="Cédula de Extranjería">Cédula de Extranjería</option>
+                <option value="Registro Civil">Registro Civil</option>
+                <option value="Pasaporte">Pasaporte</option>
+            </select>
+            <input type="text" id="numeroDocumento" placeholder="Número de documento">
+            <input type="email" id="correo" placeholder="Correo electrónico">
+            <input type="date" id="fechaNacimiento">
+
+            <div class="sexo-container">
+                <label><input type="radio" name="sexo" value="Masculino"> Masculino</label>
+                <label><input type="radio" name="sexo" value="Femenino"> Femenino</label>
+                <label><input type="radio" name="sexo" value="LGTBI"> LGTBI</label>
+                <label><input type="radio" name="sexo" value="Otro"> Otro</label>
+            </div>
+
+            <button type="submit">ENVIAR</button>
+        </form>
+    </div>
+
+    <div id="alerta-personalizada" class="alerta">
+        <span id="mensaje-alerta">¡Mensaje!</span>
+    </div>
+
+    <script>
+        const usuarios = [];
+
+        function mostrarAlerta(mensaje, tipo) {
+            const alerta = document.getElementById("alerta-personalizada");
+            const mensajeAlerta = document.getElementById("mensaje-alerta");
+
+            alerta.className = `alerta ${tipo}`; // tipo: "exito" o "error"
+            mensajeAlerta.textContent = mensaje;
+            alerta.style.display = "block";
+
+            setTimeout(() => {
+                alerta.style.display = "none";
+            }, 4000);
+        }
+
+        function validarNombre(nombre) {
+            if (!nombre.trim()) {
+                mostrarAlerta("El nombre es obligatorio.", "error");
+                return false;
+            }
+            return true;
+        }
+
+        function validarApellido(apellido) {
+            if (!apellido.trim()) {
+                mostrarAlerta("El apellido es obligatorio.", "error");
+                return false;
+            }
+            return true;
+        }
+
+        function validarTelefono(telefono) {
+            if (!telefono.trim()) {
+                mostrarAlerta("El número de teléfono es obligatorio.", "error");
+                return false;
+            }
+            if (!/^\d+$/.test(telefono)) {
+                mostrarAlerta("El teléfono debe contener solo números.", "error");
+                return false;
+            }
+            return true;
+        }
+
+        function validarCorreo(correo) {
+            if (!correo.trim()) {
+                mostrarAlerta("El correo electrónico es obligatorio.", "error");
+                return false;
+            }
+            const regexCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!regexCorreo.test(correo)) {
+                mostrarAlerta("El correo electrónico no es válido.", "error");
+                return false;
+            }
+            return true;
+        }
+
+        function validarFormulario(event) {
+            event.preventDefault();
+
+            const nombre = document.getElementById("nombres").value;
+            const apellido = document.getElementById("apellidos").value;
+            const telefono = document.getElementById("telefono").value;
+            const tipoDocumento = document.getElementById("tipoDocumento").value;
+            const numeroDocumento = document.getElementById("numeroDocumento").value;
+            const correo = document.getElementById("correo").value;
+            const fechaNacimiento = document.getElementById("fechaNacimiento").value;
+            const sexo = document.querySelector('input[name="sexo"]:checked');
+
+            if (!validarNombre(nombre)) return;
+            if (!validarApellido(apellido)) return;
+            if (!validarTelefono(telefono)) return;
+            if (!validarCorreo(correo)) return;
+
+            if (!tipoDocumento) {
+                mostrarAlerta("Debe seleccionar un tipo de documento.", "error");
+                return;
+            }
+
+            if (!numeroDocumento.trim()) {
+                mostrarAlerta("El número de documento es obligatorio.", "error");
+                return;
+            }
+
+            if (!fechaNacimiento) {
+                mostrarAlerta("Debe ingresar la fecha de nacimiento.", "error");
+                return;
+            }
+
+            if (!sexo) {
+                mostrarAlerta("Debe seleccionar un sexo.", "error");
+                return;
+            }
+
+            const nuevoUsuario = {
+                nombre,
+                apellido,
+                telefono,
+                tipoDocumento,
+                numeroDocumento,
+                correo,
+                fechaNacimiento,
+                sexo: sexo.value
+            };
+
+            usuarios.push(nuevoUsuario);
+
+            mostrarAlerta("¡Formulario enviado correctamente!", "exito");
+
+            console.log("Usuarios registrados:", usuarios);
+            event.target.reset();
+        }
+    </script>
+</body>
+</html>
